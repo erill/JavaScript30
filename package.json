@@ -1,0 +1,26 @@
+{
+  "name": "javascript30",
+  "version": "1.0.0",
+  "description": "JavaScrip tutorial",
+  "main": "main.js",
+  "scripts": {
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/erill/JavaScript30.git"
+  },
+  "author": "mzielonka",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/erill/JavaScript30/issues"
+  },
+  "homepage": "https://github.com/erill/JavaScript30#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.1",
+    "uglifyjs-webpack-plugin": "^1.1.8",
+    "webpack": "^3.11.0"
+  }
+}
