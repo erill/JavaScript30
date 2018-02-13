@@ -19,64 +19,42 @@ var auditingService = function () {
     }
 }
 
-function ObserverList() {
-    this.observerList = [];
-};
+// Mediator - immediately executing function
+var mediator = (function(){
+    // you can publish or notify to specified chanel
+    var channels = {};
 
-ObserverList.prototype.add = function (obj) {
-    return this.observerList.push(obj);
-};
-
-ObserverList.prototype.get = function (index) {
-    if (index > -1 && index < this.observerList.length) {
-        return this.observerList[index];
-    }
-};
-
-ObserverList.prototype.count = function () {
-    return this.observerList.length;
-};
-
-ObserverList.prototype.removeAt = function (index) {
-    this.observerList.splice(index, 1);
-};
-
-ObserverList.prototype.indexOf = function (obj, startIndex) {
-    var i = startIndex;
-
-    while (i < this.observerList.length) {
-        if (this.observerList[i] === obj) {
-            return i;
+    var subscribe = function(chanel, context, func) {
+        if (!mediator.channels[chanel]) {
+            mediator.channels[chanel] = [];
         }
-        i++;
+
+        mediator.channels[chanel].push({
+            context: context,
+            func: func
+        });
     }
 
-    return -1;
-}
-var ObservableTask = function (data) {
-    Task.call(this, data);
-    this.observers = new ObserverList();
-};
+    var publish = function(chanel) {
+        if (!mediator.channels[chanel]) {
+            return false;
+        }
 
-ObservableTask.prototype.addObserver = function (observer) {
-    this.observers.add(observer);
-};
+        var args = Array.prototype.slice.call(arguments, 1);
 
-ObservableTask.prototype.removeObserver = function (observer) {
-    this.observers.removeAt( this.observers.indexOf( observer, 0 ) );
-};
-
-ObservableTask.prototype.notify = function (context) {
-    var observerCount = this.observers.count();
-    for (var i = 0; i < observerCount; i++) {
-        this.observers.get(i)(context);
+        for (var i =0; i < mediator.chanels[chanel].length; i++) {            
+            var sub = mediator.chanels[chanel][i];
+            sub.func.apply(sub.context, args);
+        }
     }
-}
+    return {
+        chanels: {},
+        subscribe: subscribe,
+        publish: publish
+    }
+}());
 
-ObservableTask.prototype.save = function () {
-    this.notify(this);
-    Task.prototype.save.call(this);
-};
+
 
 var task1 = new ObservableTask({
     name: 'create a demo for constructors',
@@ -87,11 +65,16 @@ var not = new notificationService();
 var ls = new loggingService();
 var audit = new auditingService();
 
-task1.addObserver(not.update);
-task1.addObserver(ls.update);
-task1.addObserver(audit.update);
+mediator.subscribe('complete', not, not.update);
+mediator.subscribe('complete', ls, ls.update);
+mediator.subscribe('complete', audit, audit.update);
 
-task1.save();
 
-task1.removeObserver(audit);
+
+task1.complete = function() {
+    mediator.publish('complete', this);
+    task1.prototype.complete.call(this);
+}
+
+task1.complete();
 task1.save();

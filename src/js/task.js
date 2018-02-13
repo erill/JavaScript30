@@ -1,8 +1,12 @@
 // Behavioral Pattern - concerned with the assignment of responsibilities
 // between objects and how the communicate
 
-// Observe Pattern - allows a collection of objects to watch an object and be 
-// notified of changes
+// Mediator Pattern - controls communication between objects so neither
+// object has to be coupled to the others
+// - allows for loosely coupled system
+// - 1 object manages all comunication
+// - many to many relationship
+
 
 var Task = function (data) {
     this.name = data.name;
